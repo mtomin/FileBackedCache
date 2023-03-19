@@ -2,6 +2,9 @@
 {
     using FileBackedCache.Interfaces;
 
+    /// <summary>
+    /// Provides file access.
+    /// </summary>
     internal sealed class FileProvider : IFileProvider
     {
         /// <inheritdoc/>

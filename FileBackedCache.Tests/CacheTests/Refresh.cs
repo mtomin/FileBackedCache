@@ -1,4 +1,4 @@
-﻿namespace FileBackedCache.Tests
+﻿namespace FileBackedCache.Tests.CacheTests
 {
     using FileBackedCache.Configuration;
     using FileBackedCache.Implementation;

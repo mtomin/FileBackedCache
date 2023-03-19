@@ -1,11 +1,9 @@
-﻿namespace FileBackedCache.Tests
+﻿namespace FileBackedCache.Tests.CacheTests
 {
     using FileBackedCache.Configuration;
     using FileBackedCache.Implementation;
     using FileBackedCache.Interfaces;
-    using FileBackedCache.Models;
     using FileBackedCache.Tests.Helpers;
-    using FluentAssertions;
     using Moq;
     using Xunit;
 

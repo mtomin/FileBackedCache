@@ -1,6 +1,7 @@
 ﻿namespace FileBackedCache.Services
 {
     using System.Diagnostics;
+    using System.Reflection.Metadata.Ecma335;
     using FileBackedCache.Configuration;
     using FileBackedCache.Interfaces;
     using FileBackedCache.Models;
@@ -43,10 +44,13 @@
                 }
 
                 // signal that I'm reading.
-                readers.WaitOne();
+                if (!readers.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout)))
+                {
+                    return new ReaderLock(readers, readFinished, lockAcquired: false);
+                }
 
                 // check whether I'm actually allowed to read
-                if (readAllowed.WaitOne(0))
+                if (readAllowed.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout)))
                 {
                     return new ReaderLock(readers, readFinished); // great!
                 }
@@ -56,7 +60,7 @@
                 readFinished.Set();
 
                 // block until it's ok to read
-                readAllowed.WaitOne();
+                readAllowed.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout));
             }
         }
 
@@ -75,15 +79,22 @@
             var sw = new Stopwatch();
             sw.Start();
 
+            bool isWriter = false;
+
             // block until I am the only writer
             try
             {
-                writer.WaitOne();
+                isWriter = writer.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout));
             }
             catch (AbandonedMutexException)
             {
                 // The mutex was abandoned in another process, but it was still acquired
                 // TODO: log?
+            }
+
+            if (!isWriter)
+            {
+                return new WriterLock(readAllowed, writer, lockAcquired: false);
             }
 
             // signal that readers need to cease
@@ -102,12 +113,12 @@
                 readFinished.Reset();
 
                 // check if there is a reader
-                readers.WaitOne();
+                readers.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout));
                 readerCount = int.MaxValue - (readers.Release() + 1);
                 if (readerCount > 0)
                 {
                     // block until some reader finishes
-                    readFinished.WaitOne();
+                    readFinished.WaitOne(GetLockRemainigTime(sw.Elapsed, _configuration.LockTimeout));
                 }
             }
 
@@ -125,5 +136,8 @@
 
         private string WriterSemaphoreName(string filePath)
            => $"{nameof(FileBackedCache)}_writer:{filePath.Replace(Path.DirectorySeparatorChar, '_')}";
+
+        private static TimeSpan GetLockRemainigTime(TimeSpan elapsed, TimeSpan timeout)
+            => elapsed > timeout ? (timeout - elapsed) : TimeSpan.FromTicks(-1);
     }
 }
