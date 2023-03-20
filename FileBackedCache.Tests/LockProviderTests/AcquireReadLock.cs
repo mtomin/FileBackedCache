@@ -28,9 +28,9 @@
         [Fact]
         public void AcquireReadLock_WhenReadNotAllowed_ReturnsLockAcquiredFalse()
         {
-            var uniqueName = nameof(AcquireReadLock_WhenReadNotAllowed_ReturnsLockAcquiredFalse);
+            const string uniqueName = nameof(AcquireReadLock_WhenReadNotAllowed_ReturnsLockAcquiredFalse);
             var handleName = $"{nameof(FileBackedCache)}-readAllowed:{uniqueName}".Replace(Path.DirectorySeparatorChar, '_');
-            EventWaitHandle readAllowed = new(true, EventResetMode.ManualReset, handleName);
+            EventWaitHandle readAllowed = new (true, EventResetMode.ManualReset, handleName);
             readAllowed.Reset();
             var service = CreateLockProviderInstance(1);
             var readLock = service.AcquireReadLock(uniqueName);
@@ -40,9 +40,9 @@
         [Fact]
         public void AcquireReadLock_WhenMaxReadersReached_ReturnsLockAcquiredFalse()
         {
-            var uniqueName = nameof(AcquireReadLock_WhenMaxReadersReached_ReturnsLockAcquiredFalse);
+            const string uniqueName = nameof(AcquireReadLock_WhenMaxReadersReached_ReturnsLockAcquiredFalse);
             var semaphoreName = $"{nameof(FileBackedCache)}_readers:{uniqueName.Replace(Path.DirectorySeparatorChar, '_')}";
-            Semaphore readers = new(0, 1, semaphoreName);
+            var readers = new Semaphore(0, 1, semaphoreName);
             var service = CreateLockProviderInstance(3);
             var readLock = service.AcquireReadLock(uniqueName);
             readLock.LockAcquired.Should().BeFalse();

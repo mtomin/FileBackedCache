@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="readAllowed">Block readers while writing; release after writing.</param>
         /// <param name="writer">Block writers while writing.</param>
-        /// <param name="lockAcquired">Has lock been successfully acquired.</param>
+        /// <param name="lockAcquired">Lock has been successfully acquired.</param>
         public WriterLock(EventWaitHandle readAllowed, Semaphore writer, bool lockAcquired = true)
             : base(lockAcquired)
         {
@@ -25,9 +25,13 @@
         /// <inheritdoc/>
         public void Dispose()
         {
-            // signal that readers may continue, and I am no longer the writer
-            ReadAllowed.Set();
-            Writer.Release();
+            if (LockAcquired)
+            {
+                // signal that readers may continue, and I am no longer the writer
+                ReadAllowed.Set();
+                Writer.Release();
+            }
+
             GC.SuppressFinalize(this);
         }
     }
