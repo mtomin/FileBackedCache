@@ -41,9 +41,9 @@
         public void AcquireWriteLock_WhenReadersActive_ReturnsLockAcquiredFalse()
         {
             const string uniqueName = nameof(AcquireWriteLock_WhenAnotherWriterExists_ReturnsLockAcquiredFalse);
-            var handleName = $"{nameof(FileBackedCache)}-readAllowed:{uniqueName}".Replace(Path.DirectorySeparatorChar, '_');
+            var handleName = $"Global\\{nameof(FileBackedCache)}-readAllowed:{uniqueName}".Replace(Path.DirectorySeparatorChar, '_');
             var service = CreateLockProviderInstance(1);
-            var semaphoreName = $"{nameof(FileBackedCache)}_readers:{uniqueName.Replace(Path.DirectorySeparatorChar, '_')}";
+            var semaphoreName = $"Global\\{nameof(FileBackedCache)}_readers:{uniqueName.Replace(Path.DirectorySeparatorChar, '_')}";
             Semaphore readers = new (0, 1, semaphoreName);
             var writeLock = service.AcquireWriteLock(uniqueName);
             writeLock.LockAcquired.Should().BeFalse();

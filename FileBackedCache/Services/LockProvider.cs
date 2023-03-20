@@ -126,16 +126,16 @@
         }
 
         private static string ReadAllowedHandleName(string filePath)
-            => $"{nameof(FileBackedCache)}-readAllowed:{filePath}".Replace(Path.DirectorySeparatorChar, '_');
+            => $"Global\\{nameof(FileBackedCache)}-readAllowed:{filePath}".Replace(Path.DirectorySeparatorChar, '_');
 
         private static string ReadFinishedHandleName(string filePath)
-            => $"{nameof(FileBackedCache)}-readFinished:{filePath}".Replace(Path.DirectorySeparatorChar, '_');
+            => $"Global\\{nameof(FileBackedCache)}-readFinished:{filePath}".Replace(Path.DirectorySeparatorChar, '_');
 
         private static string ReaderSemaphoreName(string filePath)
-            => $"{nameof(FileBackedCache)}_readers:{filePath.Replace(Path.DirectorySeparatorChar, '_')}";
+            => $"Global\\{nameof(FileBackedCache)}_readers:{filePath.Replace(Path.DirectorySeparatorChar, '_')}";
 
         private static string WriterSemaphoreName(string filePath)
-           => $"{nameof(FileBackedCache)}_writer:{filePath.Replace(Path.DirectorySeparatorChar, '_')}";
+           => $"Global\\{nameof(FileBackedCache)}_writer:{filePath.Replace(Path.DirectorySeparatorChar, '_')}";
 
         private static TimeSpan GetLockRemainigTime(TimeSpan elapsed, TimeSpan timeout)
             => elapsed < timeout ? (timeout - elapsed) : TimeSpan.FromTicks(0);
