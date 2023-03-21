@@ -16,20 +16,6 @@
         /// Register dependencies for file-backed caching.
         /// </summary>
         /// <param name="services">Service collection.</param>
-        /// <param name="config">Cache configuration.</param>
-        /// <returns>Service collection with registered services.</returns>
-        public static IServiceCollection AddFileBackedCache(this IServiceCollection services, Action<CacheConfiguration> config)
-        {
-            var options = new CacheConfiguration();
-            config.Invoke(options);
-
-            return services.AddFileBackedCache(options);
-        }
-
-        /// <summary>
-        /// Register dependencies for file-backed caching.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
         /// <param name="rootFolder">Folder for storing cache files.</param>
         /// <returns>Service collection with registered services.</returns>
         public static IServiceCollection AddFileBackedCache(this IServiceCollection services, string rootFolder)

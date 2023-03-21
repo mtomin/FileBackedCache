@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 
 [assembly: InternalsVisibleTo("FileBackedCache.Tests")]
@@ -14,8 +15,13 @@ namespace FileBackedCache.Models
         /// Initializes a new instance of the <see cref="CacheEntry"/> class.
         /// Not to be called directly; used solely by the deserializer.
         /// </summary>
-        public CacheEntry()
+        [JsonConstructor]
+        public CacheEntry(byte[] value, TimeSpan? slidingExpiration, DateTime? expirationTime, DateTime? absoluteExpirationTime)
         {
+            Value = value;
+            SlidingExpiration = slidingExpiration;
+            ExpirationTime = expirationTime;
+            AbsoluteExpirationTime = absoluteExpirationTime;
         }
 
         /// <summary>
